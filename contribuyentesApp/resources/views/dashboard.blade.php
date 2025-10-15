@@ -259,6 +259,8 @@
         // Cerrar Modal de Contribuyente
         $('#btnCerrar').click(function(){ $('#modalContribuyente').addClass('hidden'); });
 
+
+
         // Enviar Formulario (Crear/Editar - Solo Administrador)
         $('#formContribuyente').submit(function(e){
             e.preventDefault();
@@ -291,6 +293,9 @@
             });
         });
 
+
+
+        
         // Ver / Editar Contribuyente
         $('#tablaContribuyentes').on('click', '.btnView, .btnEdit', function(){
             const id = $(this).data('id'); 

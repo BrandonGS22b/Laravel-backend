@@ -101,7 +101,7 @@ class ContribuyenteController extends Controller
             return response()->json(['message' => 'Contribuyente no encontrado'], 404);
         }
 
-        // 🧮 Calcular frecuencia de letras con helper recursivo
+        //Calcular frecuencia de letras con helper recursivo
         $texto = $contribuyente->nombres . ' ' . $contribuyente->apellidos;
         $frecuencia = ContarLetrasHelper::contar($texto);
 
