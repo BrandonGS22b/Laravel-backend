@@ -162,51 +162,39 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"/>
     
     <script>
-    $(document).ready(function() {
-        
-        // Variable para almacenar el ID del contribuyente a eliminar
-        let contribuyenteIdToDelete = null;
-        
-        // Obtener el ID del rol del usuario autenticado de Blade
-        const userRoleId = {!! json_encode(Auth::check() ? Auth::user()->role_id : 0) !!};
-        
-        // La capacidad de EDITAR, CREAR y ELIMINAR solo pertenece al Administrador (ID 1)
-        const canEditCreateOrDelete = (userRoleId === 2);
+    // --- Variables globales accesibles ---
+    const userRoleId = {!! json_encode(Auth::check() ? Auth::user()->role_id : 0) !!};
+    const canEditCreateOrDelete = (userRoleId === 2);
+    let contribuyenteIdToDelete = null; // variable para eliminar
 
-        // Inicialización de DataTables
+    $(document).ready(function() {
+        // --- Inicializar DataTable ---
         const tabla = $('#tablaContribuyentes').DataTable({
-            ajax: { url: '{{ route("contribuyentes.index") }}', dataSrc: 'data' },
+            ajax: {
+                url: '{{ route("contribuyentes.data") }}',
+                dataSrc: 'data'
+            },
             columns: [
                 { data: 'tipo_documento' },
                 { data: 'documento' },
                 { data: 'nombres' },
                 { data: 'apellidos' },
                 { data: 'telefono' },
-                { 
-                    data: 'id', 
+                {
+                    data: 'id',
                     orderable: false,
                     searchable: false,
-                    render: function(data){
-                        // Botón Ver (Siempre visible para cualquier rol)
-                        let buttons = `
-                            <button class="btnView bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mx-1" data-id="${data}">Ver</button>
-                        `;
-
-                        // Botones Editar y Eliminar (Solo visible si es Administrador)
+                    render: function(data) {
+                        let buttons = `<button class="btnView" data-id="${data}">Ver</button>`;
                         if (canEditCreateOrDelete) {
-                            buttons += `
-                                <button class="btnEdit bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm mx-1" data-id="${data}">Editar</button>
-                                <button class="btnDelete bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm mx-1" data-id="${data}">Eliminar</button>
-                            `;
+                            buttons += ` <button class="btnEdit" data-id="${data}">Editar</button>`;
+                            buttons += ` <button class="btnDelete" data-id="${data}">Eliminar</button>`;
                         }
-                        
                         return buttons;
                     }
                 }
             ],
-            // Ajustes para DataTables para compatibilidad en modo oscuro
             initComplete: function() {
-                // Aplica clases de Tailwind para modo oscuro al contenedor de DataTables
                 $('#tablaContribuyentes_wrapper').addClass('dark:bg-gray-900 dark:text-gray-200 p-4 rounded-lg');
                 $('#tablaContribuyentes').find('tbody').addClass('text-gray-800 dark:text-gray-200');
             }
@@ -214,58 +202,44 @@
 
         function limpiarErrores() { $('.error-text').text(''); }
 
-        // --- Eventos para Modales de Creación/Edición/Visualización ---
-
-        // Función auxiliar para formatear la fecha ISO a un formato local legible
         function formatReadableDate(isoString) {
             if (!isoString) return 'N/A';
             try {
-                // Intenta parsear la fecha. Se usa 'es-CO' como ejemplo de español.
                 return new Date(isoString).toLocaleString('es-CO', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
+                    year: 'numeric', month: 'short', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
                     hour12: true
                 });
             } catch (e) {
-                return isoString; // En caso de error, devuelve el string original
+                return isoString;
             }
         }
 
+        // --- Crear Contribuyente ---
+        $('#btnCrear').click(function() {
+            if (!canEditCreateOrDelete) return;
 
-        // Mostrar Modal de Creación (Solo Administrador)
-        $('#btnCrear').click(function(){
-            if (!canEditCreateOrDelete) return; // Chequeo de seguridad JS
             $('#formContribuyente')[0].reset();
             $('#contribuyenteId').val('');
             $('#frecuenciaLetras').text('');
-            
-            // Los campos de fecha deben limpiarse y deshabilitarse en la creación
-            $('#created_at').val('');
-            $('#updated_at').val('');
-            
+            $('#created_at, #updated_at').val('').prop('disabled', true);
             $('#formContribuyente input').prop('disabled', false);
-            // Aseguramos que los campos de auditoría (fechas) sigan deshabilitados
-            $('#created_at, #updated_at').prop('disabled', true); 
-
-            $('#btnGuardar').show(); 
+            $('#created_at, #updated_at').prop('disabled', true);
+            $('#btnGuardar').show();
             limpiarErrores();
-            $('#modalContribuyente').removeClass('hidden'); // con esto oculto los modales
+            $('#modalContribuyente').removeClass('hidden');
         });
 
-        // Cerrar Modal de Contribuyente
-        $('#btnCerrar').click(function(){ $('#modalContribuyente').addClass('hidden'); });
+        // --- Cerrar Modal ---
+        $('#btnCerrar').click(function() {
+            $('#modalContribuyente').addClass('hidden');
+        });
 
-
-
-        // Enviar Formulario (Crear/Editar - Solo Administrador)
-        $('#formContribuyente').submit(function(e){
+        // --- Guardar Contribuyente (Crear/Editar) ---
+        $('#formContribuyente').submit(function(e) {
             e.preventDefault();
-            if (!canEditCreateOrDelete) return; // Chequeo de seguridad JS
-            
+            if (!canEditCreateOrDelete) return;
+
             const id = $('#contribuyenteId').val();
             const url = id ? `/contribuyentes/${id}` : '{{ route("contribuyentes.store") }}';
             const method = id ? 'PUT' : 'POST';
@@ -273,56 +247,44 @@
 
             $.ajax({
                 url: url,
-                type: 'POST', 
-                // Excluimos explícitamente los campos de fecha de la serialización si los tuviéramosmodalContribuyente
-                // Pero como están deshabilitados en creación/edición no se envían.
-                data: $(this).serialize() + (id ? '&_method=PUT' : ''), 
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}, 
-                success: function(res){
-                    console.log(`Éxito: ${res.message}`); 
+                type: 'POST',
+                data: $(this).serialize() + (id ? '&_method=PUT' : ''),
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function(res) {
+                    console.log(`Éxito: ${res.message}`);
                     tabla.ajax.reload();
                     $('#modalContribuyente').addClass('hidden');
                 },
-                error: function(err){
-                    if(err.responseJSON && err.responseJSON.errors){
-                        for(let campo in err.responseJSON.errors){
+                error: function(err) {
+                    if (err.responseJSON && err.responseJSON.errors) {
+                        for (let campo in err.responseJSON.errors) {
                             $(`#error_${campo}`).text(err.responseJSON.errors[campo][0]);
                         }
-                    } else { console.error('Ocurrió un error al guardar.', err); }
+                    } else {
+                        console.error('Ocurrió un error al guardar.', err);
+                    }
                 }
             });
         });
 
-
-
-        
-        // Ver / Editar Contribuyente
-        $('#tablaContribuyentes').on('click', '.btnView, .btnEdit', function(){
-            const id = $(this).data('id'); 
+        // --- Ver / Editar Contribuyente ---
+        $('#tablaContribuyentes').on('click', '.btnView, .btnEdit', function() {
+            const id = $(this).data('id');
             const esVer = $(this).hasClass('btnView');
-            
-            // Si es 'Editar' y NO es Administrador, detener la acción.
-            if (!esVer && !canEditCreateOrDelete) {
-                console.warn('Acción de edición no permitida.');
-                return;
-            }
 
-            // Configurar visibilidad y estado de campos
+            if (!esVer && !canEditCreateOrDelete) return;
+
             if (esVer) {
-                // Ver: Ocultar Guardar y deshabilitar todos los inputs
                 $('#btnGuardar').hide();
                 $('#formContribuyente input').prop('disabled', true);
             } else {
-                // Editar (solo rol 1): Mostrar Guardar y habilitar inputs de formulario
                 $('#btnGuardar').show();
                 $('#formContribuyente input').prop('disabled', false);
             }
-            
-            // Los campos de auditoría (fechas) siempre deben estar deshabilitados.
-            $('#created_at, #updated_at').prop('disabled', true); 
 
-            $.get(`/contribuyentes/${id}`, function(res){
-                // Rellenar el formulario con los datos
+            $('#created_at, #updated_at').prop('disabled', true);
+
+            $.get(`/contribuyentes/${id}`, function(res) {
                 $('#contribuyenteId').val(res.contribuyente.id);
                 $('#tipo_documento').val(res.contribuyente.tipo_documento);
                 $('#documento').val(res.contribuyente.documento);
@@ -333,58 +295,49 @@
                 $('#celular').val(res.contribuyente.celular);
                 $('#email').val(res.contribuyente.email);
                 $('#usuario').val(res.contribuyente.usuario);
-                
-                // Rellenar los NUEVOS CAMPOS de fecha y darles formato
                 $('#created_at').val(formatReadableDate(res.contribuyente.created_at));
                 $('#updated_at').val(formatReadableDate(res.contribuyente.updated_at));
-                
-                // Mostrar la frecuencia de letras
                 $('#frecuenciaLetras').text(JSON.stringify(res.frecuencia, null, 2));
-                
                 limpiarErrores();
                 $('#modalContribuyente').removeClass('hidden');
-
             }).fail(function() {
                 console.error('Error al cargar los datos del contribuyente.');
             });
         });
 
-        // --- Eventos para Modal de Confirmación de Eliminación (Solo Administrador) ---
-
-        // Abrir Modal de Confirmación
-        $('#tablaContribuyentes').on('click', '.btnDelete', function(){
-            if (!canEditCreateOrDelete) return; // Chequeo de seguridad JS
-            contribuyenteIdToDelete = $(this).data('id'); 
+        // --- Eliminar Contribuyente ---
+        $('#tablaContribuyentes').on('click', '.btnDelete', function() {
+            if (!canEditCreateOrDelete) return;
+            contribuyenteIdToDelete = $(this).data('id');
             $('#modalConfirmacion').removeClass('hidden');
         });
 
-        // Cancelar Eliminación
-        $('#btnCancelarEliminar').click(function(){
+        $('#btnCancelarEliminar').click(function() {
             $('#modalConfirmacion').addClass('hidden');
             contribuyenteIdToDelete = null;
         });
 
-        // Confirmar Eliminación y ejecutar AJAX
-        $('#btnConfirmarEliminar').click(function(){
+        $('#btnConfirmarEliminar').click(function() {
             if (!contribuyenteIdToDelete || !canEditCreateOrDelete) return;
 
             $.ajax({
                 url: `/contribuyentes/${contribuyenteIdToDelete}`,
-                type: 'POST', 
-                data: {_token:'{{ csrf_token() }}', _method: 'DELETE'}, 
-                success: function(res){
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
+                success: function(res) {
                     console.log(`Éxito: ${res.message}`);
                     tabla.ajax.reload();
                     $('#modalConfirmacion').addClass('hidden');
                     contribuyenteIdToDelete = null;
                 },
-                error: function(err){
+                error: function(err) {
                     console.error('Error al eliminar el contribuyente.', err);
                     $('#modalConfirmacion').addClass('hidden');
                 }
             });
         });
 
-    });
-    </script>
+    }); // fin $(document).ready
+</script>
+
 </x-app-layout>

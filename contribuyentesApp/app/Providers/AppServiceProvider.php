@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider; // ✅ CORRECTO
+use App\Repositories\ContribuyenteRepository;
+use App\Repositories\Interfaces\ContribuyenteRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            ContribuyenteRepositoryInterface::class,
+            ContribuyenteRepository::class
+        );
     }
 
     /**

@@ -5,25 +5,28 @@ use App\Http\Controllers\ContribuyenteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-
+// Página de login
 Route::get('/', function () {
     return view('auth.login');
 });
 
-// Dashboard
+// Dashboard (sin auth para pruebas)
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('dashboard');
 
-//  Rutas protegidas (solo usuarios autenticados)
-Route::middleware('auth')->group(function () {
+// Rutas de prueba (sin auth)
+Route::group([], function () {
 
     // Perfil de usuario
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    //  CRUD de Contribuyentes
+    // CRUD de Contribuyentes
+    Route::get('/contribuyentes/data', [ContribuyenteController::class, 'getData'])
+        ->name('contribuyentes.data');
+
     Route::resource('contribuyentes', ContribuyenteController::class)
         ->names([
             'index' => 'contribuyentes.index',
@@ -32,23 +35,19 @@ Route::middleware('auth')->group(function () {
             'show' => 'contribuyentes.show',
             'edit' => 'contribuyentes.edit',
             'update' => 'contribuyentes.update',
-            'destroy' => 'contribuyentes.destroy', // este es el delete
+            'destroy' => 'contribuyentes.destroy',
         ]);
 
-        //metodos para el cud de gestion de usuarios
-       Route::middleware(['auth'])->group(function () {
-        Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios.index');
-        Route::get('/usuarios/data', [UserController::class, 'getData'])->name('usuarios.data');
-        Route::get('/usuarios/create', [UserController::class, 'create'])->name('usuarios.create');
-        Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
-        Route::get('/usuarios/{usuario}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
-        Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
-        Route::delete('/usuarios/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+    // CRUD de Usuarios
+    Route::prefix('usuarios')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('usuarios.index');
+        Route::get('/data', [UserController::class, 'getData'])->name('usuarios.data');
+        Route::get('/create', [UserController::class, 'create'])->name('usuarios.create');
+        Route::post('/', [UserController::class, 'store'])->name('usuarios.store');
+        Route::get('/{usuario}/edit', [UserController::class, 'edit'])->name('usuarios.edit');
+        Route::put('/{usuario}', [UserController::class, 'update'])->name('usuarios.update');
+        Route::delete('/{usuario}', [UserController::class, 'destroy'])->name('usuarios.destroy');
     });
-
-
- 
-    Route::get('/usuarios/data', [UserController::class, 'getData'])->name('usuarios.data');
 });
 
 require __DIR__.'/auth.php';
