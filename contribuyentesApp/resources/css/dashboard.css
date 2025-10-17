@@ -1,0 +1,70 @@
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Clases animadas */
+.animate-fade-in { animation: fadeIn 0.6s ease forwards; }
+.animate-slide-up { animation: slideUp 0.5s ease-out; }
+.animate-pop { animation: pop 0.3s ease-out; }
+
+/* Modales */
+.modal-overlay {
+  background-color: rgba(0,0,0,0.7);
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+.modal-content {
+  background-color: #fff;
+  color: #111;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+/* Botones */
+.btn-primary {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 0.6rem 1.4rem;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+.btn-primary:hover { background-color: #1e40af; }
+
+.btn-success { background-color: #16a34a; color: white; padding: 0.6rem 1.4rem; border-radius: 6px; }
+.btn-success:hover { background-color: #15803d; }
+
+.btn-secondary { background-color: #6b7280; color: white; padding: 0.6rem 1.4rem; border-radius: 6px; }
+.btn-secondary:hover { background-color: #4b5563; }
+
+.btn-danger { background-color: #dc2626; color: white; padding: 0.6rem 1.4rem; border-radius: 6px; }
+.btn-danger:hover { background-color: #b91c1c; }
+
+/* Inputs */
+.input-field {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.3rem;
+}
+.error-text {
+  color: #ef4444;
+  font-size: 0.85rem;
+}

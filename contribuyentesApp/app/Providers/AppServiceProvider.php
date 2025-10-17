@@ -6,6 +6,12 @@ use Illuminate\Support\ServiceProvider; // ✅ CORRECTO
 use App\Repositories\ContribuyenteRepository;
 use App\Repositories\Interfaces\ContribuyenteRepositoryInterface;
 
+
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\UserRepository;
+
+
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -15,7 +21,14 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             ContribuyenteRepositoryInterface::class,
-            ContribuyenteRepository::class
+            ContribuyenteRepository::class,
+        );
+
+        //registramos para que sepa cuando usar la clase en el controlador de usuarios
+        $this->app->bind(
+            UserRepositoryInterface::class,
+            UserRepository::class
+
         );
     }
 

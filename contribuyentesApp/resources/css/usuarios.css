@@ -1,0 +1,21 @@
+/* Sombra suave para la tabla */
+#tablaUsuarios_wrapper {
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+/* Botones del modal */
+#modalUsuario button {
+    transition: all 0.2s;
+}
+
+#modalUsuario button:hover {
+    transform: scale(1.05);
+}
+
+/* Validaciones */
+span.text-red-500 {
+    display: block;
+    margin-top: 0.25rem;
+}
