@@ -5,13 +5,12 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "vendor/**",
-      "storage/**"
+      "**/vendor/**"
     ],
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.php"
+        "destination": "/index.html"
       }
     ]
   }
