@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
     
     <style>
-        /* FIX: Soluciona la superposición de la flecha del select de DataTables con el número */
+
         .dataTables_length select {
             padding-right: 2rem !important;
             -webkit-appearance: none;
@@ -21,7 +21,6 @@
             position: relative;
         }
 
-        /* CLAVE: Si usas la animación CSS, asegúrate de que el modal se muestre como 'flex' cuando está activo */
         #modalUsuario:not(.hidden), #modalConfirmarEliminar:not(.hidden) {
             display: flex;
         }
@@ -145,9 +144,9 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
 
     <script>
-        // Función para mostrar modal. Usa solo 'hidden' para mayor compatibilidad con Tailwind/JS.
+      
         function showModal(selector) {
-            // Aseguramos que la clase 'hidden' se remueva y se aplique 'flex' para que se muestre.
+
             $(selector).removeClass('hidden');
         }
 
@@ -189,7 +188,7 @@
                 $('#formUsuario')[0].reset();
                 $('#id_usuario').val('');
                 $('#tituloModal').text('Nuevo Usuario');
-                $('span[id^="error_"]').text(''); // Limpiar errores
+                $('span[id^="error_"]').text(''); 
                 
                 // **CLAVE PARA CREAR**: Asegurarse de que no exista el campo _method=PUT
                 $('#formUsuario').find('input[name="_method"]').remove(); 
@@ -210,11 +209,11 @@
                 e.preventDefault();
                 const id = $('#id_usuario').val();
                 
-                // En Laravel, las rutas resource para PUT/PATCH/DELETE DEBEN usar POST con un campo _method
+              
                 const url = id ? `/usuarios/${id}` : `{{ route("usuarios.store") }}`;
-                const method = 'POST'; // Siempre POST para Laravel AJAX con _method
+                const method = 'POST'; 
 
-                $('span[id^="error_"]').text(''); // Limpiar errores
+                $('span[id^="error_"]').text('');
 
                 // **CLAVE PARA EDITAR**: Añadir el campo oculto para simular PUT/PATCH
                 if (id && !$(this).find('input[name="_method"]').length) {
@@ -240,7 +239,7 @@
             // Click en el botón Editar
             $(document).on('click', '.btnEditar', function () {
                 const id = $(this).data('id');
-                // Endpoint edit para obtener datos (mismo que usas en el controller)
+                
                 $.get(`/usuarios/${id}/edit`, function (data) {
                     $('#tituloModal').text('Editar Usuario');
                     $('#id_usuario').val(data.id);
@@ -284,7 +283,7 @@
                         // **CLAVE PARA ELIMINAR**: Cambiar 'DELETE' a 'POST' y añadir _method
                         type: 'POST', 
                         data: {
-                            _method: 'DELETE', // Simulación del método DELETE
+                            _method: 'DELETE',
                             _token: $('meta[name="csrf-token"]').attr('content') 
                         },
                         success: () => {

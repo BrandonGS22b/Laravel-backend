@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Repositories\Interfaces\ContribuyenteRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator; // AGREGADO para validación manual
-
+use Illuminate\Support\Facades\Validator; 
+use App\Helpers\ValidationHelper;
 class ContribuyenteController extends Controller
 {
     private $contribuyenteRepo;
@@ -13,8 +13,7 @@ class ContribuyenteController extends Controller
     public function __construct(ContribuyenteRepositoryInterface $contribuyenteRepo)
     {
         $this->contribuyenteRepo = $contribuyenteRepo;
-        // Middleware de autorización si es necesario
-        //$this->middleware('can:manage-contribuyentes'); 
+       
     }
 
     // Vista principal
@@ -36,7 +35,7 @@ class ContribuyenteController extends Controller
                 'documento' => $c->documento,
                 'nombres' => $c->nombres,
                 'apellidos' => $c->apellidos,
-                'nombre_completo' => $c->nombre_completo ?? $c->nombres . ' ' . $c->apellidos, // AGREGADO: Fallback si no existe atributo accessor
+                'nombre_completo' => $c->nombre_completo ?? $c->nombres . ' ' . $c->apellidos, 
                 'telefono' => $c->telefono,
                 'celular' => $c->celular,
                 'email' => $c->email,
@@ -135,11 +134,11 @@ class ContribuyenteController extends Controller
             'documento' => 'required|string|max:50|unique:contribuyentes,documento,' . $id,
             'nombres' => 'required|string|max:100',
             'apellidos' => 'required|string|max:100',
-            'direccion' => 'nullable|string|max:255', // AGREGADO
+            'direccion' => 'nullable|string|max:255', 
             'telefono' => 'nullable|string|max:50',
-            'celular' => 'nullable|string|max:50', // AGREGADO
+            'celular' => 'nullable|string|max:50', 
             'email' => 'nullable|email|max:150',
-            'usuario' => 'nullable|string|max:100', // AGREGADO
+            'usuario' => 'nullable|string|max:100', 
         ]);
         
         if ($validator->fails()) {
@@ -160,10 +159,10 @@ class ContribuyenteController extends Controller
         ]);
     }
 
-    // Eliminación
+
     public function destroy(string $id)
     {
-        // ... (El código de destroy permanece igual, se asume que funciona)
+       
         $contribuyente = $this->contribuyenteRepo->findById($id);
         if (!$contribuyente) {
             return response()->json(['error' => 'Contribuyente no encontrado'], 404);

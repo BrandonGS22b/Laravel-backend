@@ -35,35 +35,5 @@ class Contribuyente extends Model
         $contribuyente->nombre_completo = trim($contribuyente->nombres . ' ' . $contribuyente->apellidos);
     });
 }
-/*
-    protected $appends = ['nombre_completo'];
 
-    protected static function booted()
-    {
-         static::saving(function ($contribuyente) {
-            // Solo separar nombres y apellidos si es NIT
-            if (strtoupper($contribuyente->tipo_documento) === 'NIT') {
-                $parts = explode(' ', trim($contribuyente->nombres . ' ' . $contribuyente->apellidos));
-                if (count($parts) > 1) {
-                   
-                    if (count($parts) >= 3) {
-                        $contribuyente->nombres = implode(' ', array_slice($parts, 0, -2));
-                        $contribuyente->apellidos = implode(' ', array_slice($parts, -2));
-                    } else {
-                        $contribuyente->nombres = $parts[0];
-                        $contribuyente->apellidos = $parts[1] ?? '';
-                    }
-                }
-            }
-
-            // Generar nombre completo
-            $contribuyente->nombre_completo = trim($contribuyente->nombres . ' ' . $contribuyente->apellidos);
-        });
-    }
-
-    public function getNombreCompletoAttribute($value)
-    {
-        return $value ?? trim($this->nombres . ' ' . $this->apellidos);
-    }
-        */
 }

@@ -6,7 +6,7 @@ class ContarLetrasHelper
 {
     public static function contar(string $texto): array
     {
-        $texto = strtoupper(str_replace(' ', '', $texto)); // eliminar espacios y mayúsculas
+        $texto = strtoupper(str_replace(' ', '', $texto)); 
         return self::contarRecursivo(str_split($texto));
     }
 

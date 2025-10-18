@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider; // ✅ CORRECTO
+use Illuminate\Support\ServiceProvider; 
 use App\Repositories\ContribuyenteRepository;
 use App\Repositories\Interfaces\ContribuyenteRepositoryInterface;
 
@@ -14,9 +14,7 @@ use App\Repositories\UserRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+
     public function register(): void
     {
         $this->app->bind(
@@ -32,9 +30,7 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    /**
-     * Bootstrap any application services.
-     */
+    
     public function boot(): void
     {
         //

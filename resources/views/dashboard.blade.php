@@ -276,14 +276,14 @@
     function setModalState(isEdit = false, isView = false) {
         const isFormEditable = isEdit && canEdit;
         
-        // Deshabilitar/Habilitar todos los campos del formulario (excepto los de auditoría)
+
         $('#formContribuyente input:not(#created_at, #updated_at), #formContribuyente select').prop('disabled', !isFormEditable);
         
-        // Si el formulario es editable, re-aplicamos la lógica de nombres para manejar NIT/CC
+      
         if (isFormEditable) {
             aplicarLogicaNombres(); 
         } else {
-            // Si es solo para ver, aseguramos que todos los campos relevantes sean readonly.
+           
             $('#nombres, #apellidos, #nombre_completo').addClass('is-readonly').prop('readonly', true);
         }
 
@@ -429,7 +429,7 @@
             });
         });
 
-        // Manejo de Guardado/Actualización (Formulario)
+       
         $('#formContribuyente').submit(function(e) {
             e.preventDefault();
             if (!canEdit) return; 

@@ -32,9 +32,7 @@ class ContribuyenteRepository implements ContribuyenteRepositoryInterface
 
     public function create(array $data): Contribuyente
     {
-         if (!ValidationHelper::isValidEmail($data['email'])) {
-                throw new \InvalidArgumentException("Email inválido: " . $data['email']);
-            }
+         
         // Generamos nombre_completo antes de crear
         $data = $this->processNombreCompleto($data);
         return Contribuyente::create($data);
