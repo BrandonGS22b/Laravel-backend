@@ -12,70 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
-    <style>
-        /* Estilos de DataTables para Dark Mode (Se mantienen los originales para consistencia de color) */
-        .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter,
-        .dataTables_wrapper .dataTables_info,
-        .dataTables_wrapper .dataTables_processing,
-        .dataTables_wrapper .dataTables_paginate {
-            color: #E5E7EB; /* Gris muy claro */
-            font-size: 0.875rem;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            color: #E5E7EB !important;
-            border-radius: 0.5rem;
-            margin: 0 0.25rem;
-            padding: 0.5rem 1rem;
-            transition: all 0.15s ease-in-out;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
-            background-color: #4B5563 !important; /* Gris intermedio al hacer hover */
-            border-color: #4B5563 !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background-color: #374151 !important; /* Gris oscuro para selección */
-            border-color: #374151 !important;
-            color: #F9FAFB !important;
-            font-weight: 700;
-        }
-        .dataTables_wrapper .dataTables_filter input,
-        .dataTables_wrapper select {
-            border-radius: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #4B5563;
-            background-color: #4B5563;
-            color: #F9FAFB;
-        }
-        .dataTables_wrapper select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: none !important;
-        }
-        .dataTables_wrapper .dataTables_filter input:focus,
-        .dataTables_wrapper select:focus {
-            outline: none;
-            border-color: #6366F1;
-            box-shadow: 0 0 0 1px #6366F1;
-        }
-        /* Animación para el modal y estilos readonly */
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.6); }
-        .animate-modal { animation: fadeInUp 0.3s ease-out; }
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .is-readonly {
-            background-color: #f3f4f6 !important;
-            color: #4b5563 !important;
-            cursor: not-allowed;
-        }
-        .dark .is-readonly {
-            background-color: #374151 !important;
-            color: #9ca3af !important;
-        }
-    </style>
+    @vite(['resources/css/app.css'])
 
     {{-- 2. Contenido Principal: Botón Crear y Tabla --}}
     <div class="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen">
