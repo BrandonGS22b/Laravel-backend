@@ -23,10 +23,19 @@ class Contribuyente extends Model
         'fecha_registro'
     ];
 
+
+    
     protected $casts = [
         'fecha_registro' => 'datetime',
     ];
 
+    protected static function booted()
+{
+    static::creating(function ($contribuyente) {
+        $contribuyente->nombre_completo = trim($contribuyente->nombres . ' ' . $contribuyente->apellidos);
+    });
+}
+/*
     protected $appends = ['nombre_completo'];
 
     protected static function booted()
@@ -36,7 +45,7 @@ class Contribuyente extends Model
             if (strtoupper($contribuyente->tipo_documento) === 'NIT') {
                 $parts = explode(' ', trim($contribuyente->nombres . ' ' . $contribuyente->apellidos));
                 if (count($parts) > 1) {
-                    // Tomar todas las palabras excepto la última o las últimas dos como nombres
+                   
                     if (count($parts) >= 3) {
                         $contribuyente->nombres = implode(' ', array_slice($parts, 0, -2));
                         $contribuyente->apellidos = implode(' ', array_slice($parts, -2));
@@ -56,4 +65,5 @@ class Contribuyente extends Model
     {
         return $value ?? trim($this->nombres . ' ' . $this->apellidos);
     }
+        */
 }

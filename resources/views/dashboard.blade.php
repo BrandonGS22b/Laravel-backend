@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
+    {{-- Vite se encargará de encontrar y servir los archivos --}}
     @vite(['resources/css/app.css'])
 
     {{-- 2. Contenido Principal: Botón Crear y Tabla --}}

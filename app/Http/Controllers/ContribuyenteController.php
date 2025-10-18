@@ -84,35 +84,42 @@ class ContribuyenteController extends Controller
 
     // Validación y creación
     public function store(Request $request)
-    {
-        // 🚨 CAMBIOS AQUÍ: Validación fuerte de email y campos
-        $validator = Validator::make($request->all(), [
-            'tipo_documento' => 'required|string|max:10', // Corregido el max para ser más amplio que solo 'CC' o 'NIT'
-            'documento' => 'required|string|max:20|unique:contribuyentes,documento',
-            'nombres' => 'required|string|max:100', // Campo inicial (aquí puede venir la Razón Social completa)
-            'apellidos' => 'nullable|string|max:100', // No es requerido si es NIT y la Razón Social viene en 'nombres'
-            'direccion' => 'nullable|string|max:255',
-            'telefono' => 'nullable|string|max:20',
-            'celular' => 'nullable|string|max:20',
-            'email' => 'required|email:rfc,dns|unique:contribuyentes,email', // 🔑 CAMBIO: Email requerido y validación estricta (rfc, dns)
-            'usuario' => 'required|string|max:100',
-        ]);
+        {
+            $validator = Validator::make($request->all(), [
+                'tipo_documento' => 'required|string|max:10',
+                'documento' => 'required|string|max:20|unique:contribuyentes,documento',
+                'nombres' => 'required|string|max:100',
+                'apellidos' => 'nullable|string|max:100',
+                'direccion' => 'nullable|string|max:255',
+                'telefono' => 'nullable|string|max:20',
+                'celular' => 'nullable|string|max:20',
+                'email' => 'required|email:rfc,dns|unique:contribuyentes,email',
+                'usuario' => 'required|string|max:100',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+             $data = $validator->validated();
+                if (!ValidationHelper::isValidEmail($data['email'])) {
+                    return response()->json(['errors' => ['email' => ['Email inválido']]], 422);
+                }
+
+            try {
+                $contribuyente = $this->contribuyenteRepo->create($validator->validated());
+                return response()->json([
+                    'message' => '✅ Contribuyente creado correctamente',
+                    'contribuyente' => $contribuyente
+                ], 201);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'error' => 'Error interno del servidor',
+                    'mensaje' => $e->getMessage(),
+                    'stack' => $e->getTraceAsString()
+                ], 500);
+            }
         }
-
-        // El modelo de Contribuyente ahora se encarga de:
-        // 1. Separar la razón social de NIT.
-        // 2. Generar el nombre_completo.
-        // 3. Limpiar el email.
-        $contribuyente = $this->contribuyenteRepo->create($validator->validated());
-
-        return response()->json([
-            'message' => '✅ Contribuyente creado correctamente',
-            'contribuyente' => $contribuyente
-        ], 201);
-    }
 
     // Validación y actualización
     public function update(Request $request, string $id)
@@ -139,6 +146,12 @@ class ContribuyenteController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+
+            $data = $validator->validated();
+                if (isset($data['email']) && !ValidationHelper::isValidEmail($data['email'])) {
+                    return response()->json(['errors' => ['email' => ['Email inválido']]], 422);
+                }
+            // Llamamos al repositorio; aquí se procesa nombre_completo
         $this->contribuyenteRepo->update($contribuyente, $validator->validated());
 
         return response()->json([
