@@ -23,6 +23,9 @@ class ContribuyenteController extends Controller
         return view('contribuyentes.index');
     }
 
+    
+    
+
     // Data para DataTables
     public function getData(Request $request)
     {
@@ -45,6 +48,10 @@ class ContribuyenteController extends Controller
 
         return response()->json(['data' => $contribuyentes]);
     }
+
+
+
+   
 
     // Mostrar contribuyente con todos los datos
     public function show(string $id)

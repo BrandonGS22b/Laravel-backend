@@ -10,19 +10,25 @@ use Illuminate\Http\Request;
 
 class ContribuyenteRepository implements ContribuyenteRepositoryInterface
 {
-    public function getFiltered(Request $request): Collection
-    {
-        $query = Contribuyente::query();
 
-        // Lógica de filtrado (acceso directo a Eloquent)
-        foreach (['tipo_documento','documento','nombres','apellidos','telefono'] as $campo) {
-            if ($request->filled($campo)) {
-                $query->where($campo, 'like', "%{$request->$campo}%");
-            }
-        }
+    
+    
+   public function getFiltered(Request $request): Collection
+{
+    $query = Contribuyente::query();
 
-        return $query->orderBy('id', 'desc')->get();
+    if ($search = $request->nombres) { // usamos un solo input
+        $query->where(function($q) use ($search) {
+            $q->where('tipo_documento', 'like', "%{$search}%")
+              ->orWhere('documento', 'like', "%{$search}%")
+              ->orWhere('nombres', 'like', "%{$search}%")
+              ->orWhere('apellidos', 'like', "%{$search}%")
+              ->orWhere('telefono', 'like', "%{$search}%");
+        });
     }
+
+    return $query->orderBy('id', 'desc')->get();
+}
 
     public function findById(string $id): ?Contribuyente
     {

@@ -12,6 +12,8 @@ interface ContribuyenteRepositoryInterface
      * Obtiene y filtra contribuyentes. La lógica de filtrado se mantiene aquí por ser una consulta de BD pura.
      */
     public function getFiltered(Request $request): Collection;
+
+    
     
     /**
      * Busca un contribuyente por ID.
